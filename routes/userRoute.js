@@ -168,4 +168,29 @@ router.get(
   }
 );
 
+router.get(
+  "/get-all-organizations-of-a-hospital",
+  authMiddleware,
+  async (req, res) => {
+    try {
+      const hospital = new mongoose.Types.ObjectId(req.body.userId);
+      const uniqueOrganizationIds = await Inventory.distinct("organization", {
+        hospital,
+      });
+
+      const hospitals = await User.find({
+        _id: { $in: uniqueOrganizationIds },
+      });
+
+      return res.send({
+        success: true,
+        message: "Hospitals fetched successfully",
+        data: hospitals,
+      });
+    } catch (error) {
+      return res.send({ success: false, message: error.message });
+    }
+  }
+);
+
 module.exports = router;
