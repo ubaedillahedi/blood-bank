@@ -7,9 +7,11 @@ app.use(express.json());
 
 const userRoute = require("./routes/userRoute");
 const inventoryRoute = require("./routes/inventoryRoute");
+const dashboardRoute = require("./routes/dashboardRoute");
 
 app.use("/api/users", userRoute);
 app.use("/api/inventory", inventoryRoute);
+app.use("/api/dashboard", dashboardRoute);
 
 app.listen(port, () => {
   console.log(`Node JS Server Started at ${port}`);
