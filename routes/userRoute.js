@@ -1,9 +1,10 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
-const mongoose = require("../config/dbConfig");
+const mongoose = require("mongoose");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middlewares/authMiddleware");
+const Inventory = require("../models/inventoryModel");
 
 router.post("/register", async (req, res) => {
   try {
@@ -90,6 +91,29 @@ router.get("/get-current-user", authMiddleware, async (req, res) => {
       success: true,
       message: "User fetched successfully",
       data: user,
+    });
+  } catch (error) {
+    return res.send({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+router.get("/get-all-donars", authMiddleware, async (req, res) => {
+  try {
+    // get all unique donar ids from inventory
+    const organization = new mongoose.Types.ObjectId(req.body.userId);
+    const uniqueDonarIds = await Inventory.distinct("donar", {
+      organization,
+    });
+    const donars = await User.find({
+      _id: { $in: uniqueDonarIds },
+    });
+    return res.send({
+      success: true,
+      message: "Donars fetched successfully",
+      data: donars,
     });
   } catch (error) {
     return res.send({
