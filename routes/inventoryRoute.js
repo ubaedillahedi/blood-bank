@@ -78,3 +78,5 @@ router.post("/add", authMiddleware, async (req, res) => {
     return res.send({ success: false, message: error.message });
   }
 });
+
+module.exports = router
