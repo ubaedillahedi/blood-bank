@@ -91,4 +91,20 @@ router.get("/get", authMiddleware, async (req, res) => {
   }
 });
 
+router.post("/filter", authMiddleware, async (req, res) => {
+  try {
+    const inventory = await Inventory.find(req.body.filters)
+      .limit(req.body.limit || 10)
+      .sort({
+        createdAt: -1,
+      })
+      .populate("donar")
+      .populate("hospital")
+      .populate("organization");
+    return res.send({ success: true, data: inventory });
+  } catch (error) {
+    return res.send({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;
